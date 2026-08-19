@@ -1,4 +1,4 @@
-﻿(function(){
+(function(){
   /* ============ Game system ============ */
   const SYMBOL_TABLE = [
     { sym:'🍒', weight:30 },
@@ -114,6 +114,23 @@
     for(let i=0;i<perSideSide;i++) place(100, (i/(perSideSide-1))*100);
     for(let i=0;i<perSideTop;i++) place(100-(i/(perSideTop-1))*100, 100);
     for(let i=0;i<perSideSide;i++) place(0, 100-(i/(perSideSide-1))*100);
+  }
+
+  function fitCabinetToViewport(){
+    const stage = document.querySelector('.cabinet-stage');
+    if(!stage) return;
+
+    stage.style.setProperty('--ui-scale', '1');
+    stage.style.height = 'auto';
+
+    const width = els.cabinet.offsetWidth;
+    const height = els.cabinet.offsetHeight;
+    const availableWidth = Math.max(1, window.innerWidth - 16);
+    const availableHeight = Math.max(1, window.innerHeight - 32);
+    const scale = Math.min(1, availableWidth / width, availableHeight / height);
+
+    stage.style.setProperty('--ui-scale', String(scale));
+    stage.style.height = `${height}px`;
   }
 
   /* ============ 由??ㅽ듃由?鍮뚮뱶 & ?ㅽ? ============ */
@@ -378,4 +395,6 @@
   initMarqueeBulbs();
   updateCreditDisplay(false);
   updateBetDisplay();
+  fitCabinetToViewport();
+  window.addEventListener('resize', fitCabinetToViewport);
 })();
