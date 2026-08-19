@@ -1,4 +1,4 @@
-﻿  :root{
+  :root{
     --bg-deep:#150c2b;
     --cabinet:#2b1a4e;
     --cabinet-dark:#1d1236;
@@ -24,7 +24,7 @@
       var(--bg-deep);
     font-family:'Space Grotesk', sans-serif;
     color:var(--ink);
-    padding:32px 16px;
+    padding:clamp(8px, 3vh, 32px) clamp(8px, 3vw, 16px);
     overflow-x:hidden;
     position:relative;
   }
@@ -56,6 +56,8 @@
   .cabinet-stage{
     position:relative;
     z-index:1;
+    transform:scale(var(--ui-scale, 1));
+    transform-origin:center center;
   }
 
   .cabinet{
