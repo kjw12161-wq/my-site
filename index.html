@@ -12,7 +12,7 @@
 
   <div class="bg-particles" id="bgParticles"></div>
 
-  <div class="cabinet-stage">
+  <div class="cabinet-stage" id="cabinetStage">
     <div class="cabinet" id="cabinet">
       <div class="rivet tl"></div>
       <div class="rivet tr"></div>
@@ -80,7 +80,19 @@
 
       <div class="reset-row">
         <button class="reset-btn" id="resetBtn">게임머니 리셋 (100)</button>
+        <button class="reset-btn history-trigger" id="jackpotHistoryBtn">🏆 잭팟 내역 (0)</button>
       </div>
+    </div>
+  </div>
+
+  <div class="history-overlay" id="historyOverlay">
+    <div class="history-panel">
+      <div class="history-header">
+        <span class="history-title pixel">🏆 JACKPOT 내역</span>
+        <button class="history-close" id="historyClose" aria-label="닫기">✕</button>
+      </div>
+      <div class="history-list" id="historyList"></div>
+      <button class="history-clear-btn" id="historyClearBtn">내역 지우기</button>
     </div>
   </div>
 
