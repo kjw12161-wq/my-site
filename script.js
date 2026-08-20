@@ -16,10 +16,11 @@
     '7️⃣': 50, '💎': 20, '🔔': 10, '⭐': 8, '🍇': 5, '🍋': 4, '🍒': 3,
   };
   const CHERRY_PAIR_MULT = 1;
+  const INITIAL_CREDIT = 100;
   const BET_MIN = 10, BET_MAX = 100, BET_STEP = 10;
 
-  let credit = 100;
-  let bet = 10;
+  let credit = INITIAL_CREDIT;
+  let bet = BET_MIN;
   let spinning = false;
 
   const els = {
@@ -345,10 +346,26 @@
     }
   }
 
+  function getMaxAffordableBet(){
+    return Math.min(BET_MAX, Math.floor(credit / BET_STEP) * BET_STEP);
+  }
+
+  function normalizeBet(){
+    bet = Math.max(BET_MIN, Math.min(BET_MAX, Math.round(bet / BET_STEP) * BET_STEP));
+    if(credit >= BET_MIN){
+      bet = Math.min(bet, getMaxAffordableBet());
+    } else {
+      bet = BET_MIN;
+    }
+  }
+
   function updateBetDisplay(){
+    normalizeBet();
     els.betValue.textContent = bet;
     els.betMinus.disabled = spinning || bet <= BET_MIN;
-    els.betPlus.disabled = spinning || bet >= BET_MAX || bet + BET_STEP > credit;
+    els.betPlus.disabled = spinning || bet >= getMaxAffordableBet();
+    els.spinBtn.disabled = spinning || credit < bet;
+    els.lever.disabled = spinning || credit < bet;
   }
 
   function setMessage(text, cls){
@@ -364,14 +381,15 @@
   }
 
   els.betMinus.addEventListener('click', () => {
-    if(spinning) return;
+    if(spinning || bet <= BET_MIN) return;
     bet = Math.max(BET_MIN, bet - BET_STEP);
     updateBetDisplay();
     beep(260, 0.05, 'square', 0.03);
   });
   els.betPlus.addEventListener('click', () => {
-    if(spinning) return;
-    bet = Math.min(BET_MAX, bet + BET_STEP);
+    const maxAffordableBet = getMaxAffordableBet();
+    if(spinning || bet >= maxAffordableBet) return;
+    bet = Math.min(maxAffordableBet, bet + BET_STEP);
     updateBetDisplay();
     beep(320, 0.05, 'square', 0.03);
   });
@@ -401,14 +419,10 @@
     }
 
     spinning = true;
-    els.spinBtn.disabled = true;
-    els.lever.disabled = true;
-    els.betMinus.disabled = true;
-    els.betPlus.disabled = true;
+    updateBetDisplay();
     clearHighlights();
     els.winBanner.classList.remove('show');
 
-    const creditBefore = credit;
     credit -= bet;
     updateCreditDisplay(false);
     els.lastWin.textContent = '0';
@@ -487,8 +501,6 @@
     }
 
     spinning = false;
-    els.spinBtn.disabled = credit < bet;
-    els.lever.disabled = credit < bet;
     updateBetDisplay();
   }
 
@@ -569,13 +581,12 @@
   els.resetBtn.addEventListener('click', () => {
     if(spinning) return;
     const before = credit;
-    credit = 100;
-    bet = 10;
+    credit = INITIAL_CREDIT;
+    bet = BET_MIN;
     updateCreditDisplay(true, before);
     updateBetDisplay();
     setMessage('게임머니가 리셋되었습니다', null);
-    els.spinBtn.disabled = false;
-    els.lever.disabled = false;
+    updateBetDisplay();
     clearHighlights();
     els.winBanner.classList.remove('show');
     els.lastWin.textContent = '0';
